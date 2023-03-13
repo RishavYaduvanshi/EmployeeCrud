@@ -10,7 +10,7 @@ namespace EmployeeDetails.Repository
         {
             _employees = new List<Employee>()
             {
-                new Employee(){Id = 1,Name = "Riahav"}
+                
             };
 
 

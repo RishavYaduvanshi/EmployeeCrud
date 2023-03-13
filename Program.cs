@@ -1,4 +1,4 @@
-using EmployeeDetails.Model;
+using EmployeeDetails.DB;
 using EmployeeDetails.Repository;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -9,16 +9,20 @@ string connectionString = "server=localhost;port=3306;database=EmployeeDB;user=r
 builder.Services.AddDbContextPool<EmployeeDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-//Add services to the container.
-//builder.Services.AddSingleton<IEmployeeRepsitory,MockEmployeeRepository>();
-builder.Services.AddScoped<IEmployeeRepsitory, MySQLEmployeeRepository>();
-builder.Services.AddControllers();
 
+//Add services to the container.
+
+//builder.Services.AddSingleton<IEmployeeRepsitory, MockEmployeeRepository>();
+builder.Services.AddScoped<IEmployeeRepsitory, MySQLEmployeeRepository>();
+builder.Services.AddScoped<IDepartmentRepository, MySQLDepartmentRepository>();
+
+builder.Services.AddControllers();
 
 
 //Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,5 +37,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

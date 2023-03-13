@@ -1,4 +1,5 @@
-﻿using EmployeeDetails.Model;
+﻿using EmployeeDetails.DB;
+using EmployeeDetails.Model;
 
 namespace EmployeeDetails.Repository
 {
@@ -13,6 +14,11 @@ namespace EmployeeDetails.Repository
 
         public Employee AddEmployee(Employee employee)
         {
+
+            if (context.Employees.Any(u => u.Email == employee.Email))
+            {
+                return null;
+            }
             context.Employees.Add(employee);
             context.SaveChanges();
             return employee;
@@ -42,14 +48,30 @@ namespace EmployeeDetails.Repository
         public Employee UpdateEmployee(int id, Employee employeeChange)
         {
             var employee = context.Employees.Find(id);
+            
 
-            if (employee != null && !string.IsNullOrEmpty(employeeChange.Name))
+            if (employee != null)
             {
-                employee.Name = employeeChange.Name;
+                if (!string.IsNullOrEmpty(employeeChange.Name))
+                    employee.Name = employeeChange.Name;
+                if (!string.IsNullOrEmpty(employeeChange.Email))
+                    employee.Email = employeeChange.Email;
+                if (employeeChange.DepartmentId != 0 && employee.DepartmentId != employeeChange.DepartmentId)
+                {
+                    var department = context.Departments.Find(employeeChange.DepartmentId);
+                    if (department != null)
+                    {
+                        employee.DepartmentId = employeeChange.DepartmentId;
+                    }
+                    else
+                        throw new Exception("Department not found.");
+
+                }
+
                 context.SaveChanges();
             }
 
             return employee;
         }
     }
-}
+    }
