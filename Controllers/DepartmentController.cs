@@ -1,4 +1,5 @@
-﻿using EmployeeDetails.Model;
+﻿using EmployeeDetails.Dto;
+using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +18,15 @@ namespace EmployeeDetails.Controllers
 
         }
         [HttpGet]
-        [Route("[action]/{id?}")]
-        public JsonResult GetDepartment(int? id)
+        [Route("[action]/{id}")]
+        public ActionResult<Department> GetDepartment(int id)
         {
-            Department dep = departmentRepository.GetDepartmentID(id??0);
-            return Json(dep);
+            if (id == 0 )
+                return BadRequest("Department Not Found");
+            Department dep = departmentRepository.GetDepartmentID(id);
+            if (dep == null)
+                return BadRequest("Department Not Found");
+            return dep;
         }
         [HttpGet]
         [Route("[action]")]
@@ -51,5 +56,15 @@ namespace EmployeeDetails.Controllers
             return dep;
         }
 
+        [HttpPut]
+        [Route("[action]/{id}")]
+        public ActionResult<Department> UpdateDepartment(int id,Department dep)
+        {
+            if (dep.Name == null)
+                return BadRequest("Department name is null");
+            Department deapartment = departmentRepository.UpdateDepartment(id, dep);
+            if (deapartment == null) return BadRequest("Department Id does not exist");
+            return deapartment;
+        }
     }
 }

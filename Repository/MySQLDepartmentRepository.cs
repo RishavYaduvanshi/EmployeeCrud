@@ -41,9 +41,16 @@ namespace EmployeeDetails.Repository
 
         }
 
-        public Department UpdateDepartment(int id, Department department)
+        public Department UpdateDepartment(int id, Department departmentChange)
         {
-            throw new NotImplementedException();
+      
+            Department dep = GetDepartmentID(id);
+            if(dep == null) { return null; }
+            if (!string.IsNullOrEmpty(departmentChange.Name))
+                dep.Name = departmentChange.Name;
+            context.SaveChanges();
+            return dep;
+
         }
 
     }

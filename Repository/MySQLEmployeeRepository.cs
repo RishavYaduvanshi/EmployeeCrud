@@ -48,8 +48,13 @@ namespace EmployeeDetails.Repository
         public Employee UpdateEmployee(int id, Employee employeeChange)
         {
             var employee = context.Employees.Find(id);
-            
-
+            if (employee.Email != employeeChange.Email)
+            {
+                if (context.Employees.Any(u => u.Email == employeeChange.Email))
+                {
+                    return null;
+                }
+            }
             if (employee != null)
             {
                 if (!string.IsNullOrEmpty(employeeChange.Name))
@@ -64,13 +69,11 @@ namespace EmployeeDetails.Repository
                         employee.DepartmentId = employeeChange.DepartmentId;
                     }
                     else
-                        throw new Exception("Department not found.");
+                        return null;
 
                 }
-
                 context.SaveChanges();
             }
-
             return employee;
         }
     }

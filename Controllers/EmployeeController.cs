@@ -39,7 +39,7 @@ namespace EmployeeDetails.Controllers
             {
                 employee.Department = _departmentrepository.GetDepartmentID(employee.DepartmentId);
             }
-            
+            emplist.Reverse();
             return Json(emplist);   
         }
 
@@ -51,14 +51,16 @@ namespace EmployeeDetails.Controllers
             {
                 return BadRequest("Employee name or email or Department is null.");
             }
+            if (_departmentrepository.GetDepartmentID((int)emp.DepartmentId) == null)
+                return BadRequest("Department Not Found");
             
             Employee empl = new Employee()
             {
                 Name = emp.Name,
-                Department = emp.DepartmentId == null ? null : _departmentrepository.GetDepartmentID((int)emp.DepartmentId),
+                Department = emp.DepartmentId == 0 ? null : _departmentrepository.GetDepartmentID((int)emp.DepartmentId),
                 Email = emp.Email,
             };
-
+            
             if (_employeerepository.AddEmployee(empl) == null)
                 return BadRequest("Email already exists in database.");
             
@@ -70,7 +72,7 @@ namespace EmployeeDetails.Controllers
         [Route("[action]/{id}")]
         public ActionResult<Employee> UpdateEmployee(int id, [FromBody] EmployeeDto emp)
         {
-            if (emp.Name == null && emp.Email == null && emp.DepartmentId == null)
+            if (emp.Name == null && emp.Email == null && emp.DepartmentId == 0)
             {
                 return BadRequest("Employee name or email or Department is null.");
             }
@@ -81,13 +83,16 @@ namespace EmployeeDetails.Controllers
                 DepartmentId =(int) emp.DepartmentId
             };
 
+            if(_departmentrepository.GetDepartmentID(emp.DepartmentId) == null);
+                return BadRequest("Department Id Does not exist");
+
             var updatedEmployee = _employeerepository.UpdateEmployee(id,empl);
 
             if (updatedEmployee == null)
             {
-                return NotFound("Employee does not Exist");
+                return NotFound("Email is Duplicate");
             }
-
+            
             return (updatedEmployee);
         }
         [HttpDelete]
@@ -98,7 +103,7 @@ namespace EmployeeDetails.Controllers
 
             if (employee == null)
             {
-                return NotFound("Employee does not Exist");
+                return NotFound("Employee does not Exist.");
             }
             return employee;
         }

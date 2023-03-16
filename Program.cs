@@ -1,6 +1,7 @@
 using EmployeeDetails.DB;
 using EmployeeDetails.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,14 @@ builder.Services.AddDbContextPool<EmployeeDbContext>(options =>
 //builder.Services.AddSingleton<IEmployeeRepsitory, MockEmployeeRepository>();
 builder.Services.AddScoped<IEmployeeRepsitory, MySQLEmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, MySQLDepartmentRepository>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder => builder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
 
 builder.Services.AddControllers();
 
@@ -32,6 +41,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
