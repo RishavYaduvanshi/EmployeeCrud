@@ -50,7 +50,7 @@ namespace EmployeeDetails.Repository
             Employee emp = _employees.FirstOrDefault(x => x.Id == employee.Id);
             if (emp != null)
             {
-                emp.Name = employee.Name;
+                emp.FirstName = employee.FirstName;
             }
             return emp;
         }

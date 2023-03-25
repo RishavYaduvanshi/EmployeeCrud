@@ -39,7 +39,9 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult<Department> AddDepartment(Department department) 
         {
-            departmentRepository.AddDepartment(department);
+
+            if (departmentRepository.AddDepartment(department) == null)
+                return BadRequest("Department already exist");
             return department;
         }
 
@@ -62,8 +64,10 @@ namespace EmployeeDetails.Controllers
         {
             if (dep.Name == null)
                 return BadRequest("Department name is null");
+            if(departmentRepository.GetDepartmentID(id) == null)
+                return BadRequest("Department Id does not exist");
             Department deapartment = departmentRepository.UpdateDepartment(id, dep);
-            if (deapartment == null) return BadRequest("Department Id does not exist");
+            if (deapartment == null) return BadRequest("Department Name already exist");
             return deapartment;
         }
     }

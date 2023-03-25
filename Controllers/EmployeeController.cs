@@ -2,6 +2,7 @@ using EmployeeDetails.Dto;
 using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.RegularExpressions;
 
 namespace EmployeeDetails.Controllers
 {
@@ -13,7 +14,7 @@ namespace EmployeeDetails.Controllers
         private readonly IDepartmentRepository _departmentrepository;
 
 
-        public EmployeeController(IEmployeeRepsitory employeerepsitory,IDepartmentRepository departmentRepository)
+        public EmployeeController(IEmployeeRepsitory employeerepsitory, IDepartmentRepository departmentRepository)
         {
             _employeerepository = employeerepsitory;
             _departmentrepository = departmentRepository;
@@ -21,12 +22,12 @@ namespace EmployeeDetails.Controllers
         [HttpGet]
         [Route("[action]/{id?}")]
         public ActionResult<Employee> GetEmployeeByID(int? id)
-        { 
-           Employee emp =  _employeerepository.GetEmployeeById(id??1);
-           if(emp == null) return NotFound("Employee id does not match");
-           emp.Department =  _departmentrepository.GetDepartmentID(emp.DepartmentId);
-           Console.WriteLine(Json(emp));
-           return emp;
+        {
+            Employee emp = _employeerepository.GetEmployeeById(id ?? 1);
+            if (emp == null) return NotFound("Employee id does not match");
+            emp.Department = _departmentrepository.GetDepartmentID(emp.DepartmentId);
+            Console.WriteLine(Json(emp));
+            return emp;
         }
         [HttpGet]
         [Route("[action]")]
@@ -40,7 +41,7 @@ namespace EmployeeDetails.Controllers
                 employee.Department = _departmentrepository.GetDepartmentID(employee.DepartmentId);
             }
             emplist.Reverse();
-            return Json(emplist);   
+            return Json(emplist);
         }
 
         [HttpPost]
@@ -57,24 +58,30 @@ namespace EmployeeDetails.Controllers
             {
                 return BadRequest("Department Does not exist");
             }
-
-            if (emp.Name == null || emp.Email == null || emp.DepartmentId == 0)
+            if ( emp.MobileNumber.Length != 10 && !Regex.IsMatch(emp.MobileNumber, @"^(\+?\d{1,3}[- ]?)?\d{10}$"))
             {
-                return BadRequest("Employee name or email or Department is null.");
+                return BadRequest("Enter correct Mobile number");
+            }
+
+            if (emp.FirstName == null || emp.LastName == null || emp.MobileNumber == null || emp.Email == null || emp.DepartmentId == 0)
+            {
+                return BadRequest("Employee Data is not Filled.");
             }
             if (_departmentrepository.GetDepartmentID((int)emp.DepartmentId) == null)
                 return BadRequest("Department Not Found");
-            
+
             Employee empl = new Employee()
             {
-                Name = emp.Name,
+                FirstName = emp.FirstName,
+                LastName = emp.LastName,
+                MobileNumber = emp.MobileNumber,
                 Department = emp.DepartmentId == 0 ? null : _departmentrepository.GetDepartmentID((int)emp.DepartmentId),
                 Email = emp.Email,
             };
-            
+
             if (_employeerepository.AddEmployee(empl) == null)
                 return BadRequest("Email already exists in database.");
-            
+
             _employeerepository.AddEmployee(empl);
             return empl;
         }
@@ -89,24 +96,34 @@ namespace EmployeeDetails.Controllers
             {
                 emp.DepartmentId = department.Id;
             }
-            if (emp.Name == null && emp.Email == null && emp.DepartmentId == 0)
+            else
+            {
+                return BadRequest("Department does not exist");
+            }
+            if (emp.FirstName == null && emp.LastName == null && emp.Email == null && emp.MobileNumber == null && emp.DepartmentId == 0)
             {
                 return BadRequest("Employee name or email or Department is null.");
             }
+            //if (emp.MobileNumber.Length != 10 && emp.MobileNumber == null)
+            //{
+            //    return BadRequest("Enter correct Mobile number");
+            //}
             Employee empl = new Employee()
             {
-                Name = emp.Name,
+                FirstName = emp.FirstName,
+                LastName  = emp.LastName,
+                MobileNumber = emp.MobileNumber,
                 Email = emp.Email,
-                DepartmentId =(int) emp.DepartmentId
+                DepartmentId = (int)emp.DepartmentId
             };
 
-            var updatedEmployee = _employeerepository.UpdateEmployee(id,empl);
+            var updatedEmployee = _employeerepository.UpdateEmployee(id, empl);
 
             if (updatedEmployee == null)
             {
                 return NotFound("Email is Duplicate");
             }
-            
+
             return (updatedEmployee);
         }
         [HttpDelete]

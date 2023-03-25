@@ -57,8 +57,14 @@ namespace EmployeeDetails.Repository
             }
             if (employee != null)
             {
-                if (!string.IsNullOrEmpty(employeeChange.Name))
-                    employee.Name = employeeChange.Name;
+                if (!string.IsNullOrEmpty(employeeChange.FirstName))
+                    employee.FirstName = employeeChange.FirstName;
+                if (!string.IsNullOrEmpty(employeeChange.LastName ))
+                    employee.LastName = employeeChange.LastName ;
+                if (!string.IsNullOrEmpty(employeeChange.MobileNumber))
+                {
+                    employee.MobileNumber  = employeeChange.MobileNumber;
+                }
                 if (!string.IsNullOrEmpty(employeeChange.Email))
                     employee.Email = employeeChange.Email;
                 if (employeeChange.DepartmentId != 0 && employee.DepartmentId != employeeChange.DepartmentId)

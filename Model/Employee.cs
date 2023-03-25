@@ -10,11 +10,14 @@ namespace EmployeeDetails.Model
 
         [Key]
         public int Id { get; set; }
-        public string? Name { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
 
         [EmailAddress]
-        [UniqueEmail]
         public string? Email { get; set; }
+
+        [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "Invalid mobile number format")]
+        public string? MobileNumber { get; set; }
 
         public int DepartmentId { get; set; }
       
