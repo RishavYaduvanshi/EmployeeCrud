@@ -47,6 +47,17 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult<Employee> AddEmployee(EmployeeDto emp)
         {
+            var department = _departmentrepository.GetAllDepartment().FirstOrDefault(d => d.Name == emp.DepartmentName);
+
+            if (department != null)
+            {
+                emp.DepartmentId = department.Id;
+            }
+            else
+            {
+                return BadRequest("Department Does not exist");
+            }
+
             if (emp.Name == null || emp.Email == null || emp.DepartmentId == 0)
             {
                 return BadRequest("Employee name or email or Department is null.");
@@ -72,6 +83,12 @@ namespace EmployeeDetails.Controllers
         [Route("[action]/{id}")]
         public ActionResult<Employee> UpdateEmployee(int id, [FromBody] EmployeeDto emp)
         {
+            var department = _departmentrepository.GetAllDepartment().FirstOrDefault(d => d.Name == emp.DepartmentName);
+
+            if (department != null)
+            {
+                emp.DepartmentId = department.Id;
+            }
             if (emp.Name == null && emp.Email == null && emp.DepartmentId == 0)
             {
                 return BadRequest("Employee name or email or Department is null.");
@@ -82,9 +99,6 @@ namespace EmployeeDetails.Controllers
                 Email = emp.Email,
                 DepartmentId =(int) emp.DepartmentId
             };
-
-            if(_departmentrepository.GetDepartmentID(emp.DepartmentId) == null);
-                return BadRequest("Department Id Does not exist");
 
             var updatedEmployee = _employeerepository.UpdateEmployee(id,empl);
 
