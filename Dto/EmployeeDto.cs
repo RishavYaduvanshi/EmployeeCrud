@@ -1,4 +1,6 @@
-﻿namespace EmployeeDetails.Dto
+﻿using EmployeeDetails.Model;
+
+namespace EmployeeDetails.Dto
 {
     public class EmployeeDto
     {
@@ -11,6 +13,8 @@
         public string? MobileNumber { get; set; }
         public int? DepartmentId { get; set; }
 
-        public string DepartmentName { get; set; }
+        public string? DepartmentName { get; set; }
+
+        public List<int>? ProjectIds { get; set; }
     }
 }

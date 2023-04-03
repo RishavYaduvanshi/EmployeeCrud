@@ -48,8 +48,7 @@ namespace EmployeeDetails.Repository
         {
       
             Department dep = GetDepartmentID(id);
-            if(dep == null) { return null; }
-            if (dep.Name.ToLower() != departmentChange.Name.ToLower() && context.Departments.Any(x => x.Name.ToLower() == departmentChange.Name.ToLower()))
+            if ( dep.Name.ToLower() != departmentChange.Name.ToLower() && context.Departments.Any(x => x.Name.ToLower() == departmentChange.Name.ToLower()))
                 return null;
             if (!string.IsNullOrEmpty(departmentChange.Name))
                 dep.Name = departmentChange.Name;

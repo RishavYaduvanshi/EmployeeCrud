@@ -16,6 +16,9 @@ builder.Services.AddDbContextPool<EmployeeDbContext>(options =>
 //builder.Services.AddSingleton<IEmployeeRepsitory, MockEmployeeRepository>();
 builder.Services.AddScoped<IEmployeeRepsitory, MySQLEmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, MySQLDepartmentRepository>();
+builder.Services.AddScoped<IProjectRepository, MySQLProjectRepository>();
+builder.Services.AddScoped<IEmpProjRepository, MySQLEmpProj>();
+
 
 builder.Services.AddCors(options =>
 {

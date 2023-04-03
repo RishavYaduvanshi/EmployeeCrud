@@ -1,6 +1,7 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using EmployeeDetails.HelperAttri;
+using System.Text.Json.Serialization;
 
 namespace EmployeeDetails.Model
 {
@@ -15,13 +16,13 @@ namespace EmployeeDetails.Model
 
         [EmailAddress]
         public string? Email { get; set; }
-
-        [RegularExpression(@"^\d{3}-\d{3}-\d{4}$", ErrorMessage = "Invalid mobile number format")]
         public string? MobileNumber { get; set; }
 
         public int DepartmentId { get; set; }
-      
         public virtual Department? Department { get; set; }
+
+        
+        public virtual ICollection<EmployeeProject>? EmployeeProjects { get; set; }
 
 
 

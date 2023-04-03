@@ -2,6 +2,7 @@
 using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.ObjectModel;
 
 namespace EmployeeDetails.Controllers
 {
@@ -33,7 +34,9 @@ namespace EmployeeDetails.Controllers
         public JsonResult GetAllDepartments()
         {
             IEnumerable<Department> dep =  departmentRepository.GetAllDepartment();
-            return Json(dep) ;
+            var deplist =dep.ToList();
+            deplist.Reverse();
+            return Json(deplist) ;
         }
         [HttpPost]
         [Route("[action]")]
