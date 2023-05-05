@@ -1,5 +1,8 @@
+using EmployeeDetails.BasicAuth;
 using EmployeeDetails.DB;
 using EmployeeDetails.Repository;
+using EmployeeDetails.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
@@ -18,6 +21,12 @@ builder.Services.AddScoped<IEmployeeRepsitory, MySQLEmployeeRepository>();
 builder.Services.AddScoped<IDepartmentRepository, MySQLDepartmentRepository>();
 builder.Services.AddScoped<IProjectRepository, MySQLProjectRepository>();
 builder.Services.AddScoped<IEmpProjRepository, MySQLEmpProj>();
+builder.Services.AddScoped<ISignUpRepo, MySQLSignUpRepo>();
+builder.Services.AddScoped<IRoleRepo, MySQLRoleRepo>();
+builder.Services.AddScoped<ISignupRolesRepo, MySQLSignupRoleRepo>();
+builder.Services.AddSingleton<Mail>();
+
+
 
 
 builder.Services.AddCors(options =>
@@ -30,6 +39,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 //Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -48,8 +59,8 @@ app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 

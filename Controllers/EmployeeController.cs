@@ -1,12 +1,16 @@
+using EmployeeDetails.BasicAuth;
+using EmployeeDetails.DB;
 using EmployeeDetails.Dto;
 using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 
 namespace EmployeeDetails.Controllers
 {
+
+    [Authorize(AuthenticationSchemes = "BasicAuthentication")]
     [ApiController]
     [Route("[controller]")]
     public class EmployeeController : Controller
@@ -15,9 +19,7 @@ namespace EmployeeDetails.Controllers
         private readonly IDepartmentRepository _departmentrepository;
         private readonly IEmpProjRepository _empProjRepository;
         private readonly IProjectRepository _projectRepository;
-
-
-
+        
 
         public EmployeeController(IEmployeeRepsitory employeerepsitory, IDepartmentRepository departmentRepository,IEmpProjRepository empProjRepository,IProjectRepository projectRepository)
         {
@@ -25,6 +27,7 @@ namespace EmployeeDetails.Controllers
             _departmentrepository = departmentRepository;
             _empProjRepository = empProjRepository;
             _projectRepository = projectRepository;
+           
         }
         [HttpGet]
         [Route("[action]/{id?}")]
@@ -52,6 +55,7 @@ namespace EmployeeDetails.Controllers
 
             return emp;
         }
+        
         [HttpGet]
         [Route("[action]")]
         public JsonResult GetAllEmployee()
@@ -133,7 +137,7 @@ namespace EmployeeDetails.Controllers
                     EmployeeId = empl.Id,
                     ProjectId = proj,
                     Project = _projectRepository.GetProjectId(proj)
-            };
+                };
                 empl.EmployeeProjects.Add(ep);
                 _empProjRepository.AddEmpProj(ep);
             }

@@ -2,12 +2,12 @@
 using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeDetails.Controllers
 {
+    [Authorize(AuthenticationSchemes = "BasicAuthentication")]
     [ApiController]
-   
     [Route("[controller]")]
     public class DepartmentController : Controller
     {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EmployeeDetails.Migrations
 {
     /// <inheritdoc />
-    public partial class AddProj : Migration
+    public partial class AddAuth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,6 +47,40 @@ namespace EmployeeDetails.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RoleName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "SignUps",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UserName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignUps", x => x.UserId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -75,6 +109,30 @@ namespace EmployeeDetails.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "SignUpsRoles",
+                columns: table => new
+                {
+                    SignUpId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SignUpsRoles", x => new { x.SignUpId, x.RoleId });
+                    table.ForeignKey(
+                        name: "FK_SignUpsRoles_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "RoleId");
+                    table.ForeignKey(
+                        name: "FK_SignUpsRoles_SignUps_SignUpId",
+                        column: x => x.SignUpId,
+                        principalTable: "SignUps",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "EmployeeProjects",
                 columns: table => new
                 {
@@ -94,8 +152,7 @@ namespace EmployeeDetails.Migrations
                         name: "FK_EmployeeProjects_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "PId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "PId");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -108,6 +165,11 @@ namespace EmployeeDetails.Migrations
                 name: "IX_Employees_DepartmentId",
                 table: "Employees",
                 column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SignUpsRoles_RoleId",
+                table: "SignUpsRoles",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -117,10 +179,19 @@ namespace EmployeeDetails.Migrations
                 name: "EmployeeProjects");
 
             migrationBuilder.DropTable(
+                name: "SignUpsRoles");
+
+            migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "SignUps");
 
             migrationBuilder.DropTable(
                 name: "Departments");

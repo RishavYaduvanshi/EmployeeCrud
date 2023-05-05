@@ -93,6 +93,55 @@ namespace EmployeeDetails.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("EmployeeDetails.Model.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoleName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("EmployeeDetails.Model.SignUp", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("SignUps");
+                });
+
+            modelBuilder.Entity("EmployeeDetails.Model.SignupRole", b =>
+                {
+                    b.Property<int?>("SignUpId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SignUpId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("SignUpsRoles");
+                });
+
             modelBuilder.Entity("EmployeeDetails.Model.Employee", b =>
                 {
                     b.HasOne("EmployeeDetails.Model.Department", "Department")
@@ -121,6 +170,23 @@ namespace EmployeeDetails.Migrations
                     b.Navigation("Project");
                 });
 
+            modelBuilder.Entity("EmployeeDetails.Model.SignupRole", b =>
+                {
+                    b.HasOne("EmployeeDetails.Model.Role", "Role")
+                        .WithMany("SignupRoles")
+                        .HasForeignKey("RoleId");
+
+                    b.HasOne("EmployeeDetails.Model.SignUp", "SignUp")
+                        .WithMany("SignupRoles")
+                        .HasForeignKey("SignUpId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("SignUp");
+                });
+
             modelBuilder.Entity("EmployeeDetails.Model.Department", b =>
                 {
                     b.Navigation("Employees");
@@ -134,6 +200,16 @@ namespace EmployeeDetails.Migrations
             modelBuilder.Entity("EmployeeDetails.Model.Project", b =>
                 {
                     b.Navigation("EmployeeProjects");
+                });
+
+            modelBuilder.Entity("EmployeeDetails.Model.Role", b =>
+                {
+                    b.Navigation("SignupRoles");
+                });
+
+            modelBuilder.Entity("EmployeeDetails.Model.SignUp", b =>
+                {
+                    b.Navigation("SignupRoles");
                 });
 #pragma warning restore 612, 618
         }

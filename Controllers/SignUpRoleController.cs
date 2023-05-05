@@ -1,0 +1,161 @@
+﻿using EmployeeDetails.Dto;
+using EmployeeDetails.Model;
+using EmployeeDetails.Repository;
+using EmployeeDetails.Services;
+using Microsoft.AspNetCore.Mvc;
+using System.Text;
+
+namespace EmployeeDetails.Controllers
+{
+
+    [ApiController]
+    [Route("[controller]")]
+    public class SignUpRoleController : Controller
+    {
+        private readonly ISignUpRepo _signUpRepository;
+        private readonly IRoleRepo _roleRepo;
+        private readonly ISignupRolesRepo _signUproleRepo;
+        private readonly Mail _mail;
+
+        public SignUpRoleController(ISignUpRepo signUpRepository, IRoleRepo roleRepo, ISignupRolesRepo signupRolesRepo, Mail mail)
+        {
+            _signUpRepository = signUpRepository;
+            _roleRepo = roleRepo;
+            _signUproleRepo = signupRolesRepo;
+            _mail = mail;
+        }
+
+        [HttpGet]
+
+        public ActionResult<SignUp> GetSignUpById(int id)
+        {
+            SignUp signUp = _signUpRepository.GetSignUpById(id);
+            if (signUp == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            return signUp;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public JsonResult GetAllSignUp()
+        {
+            var signlist = _signUpRepository.getAllSignUp().ToList();
+
+            foreach (var signUp in signlist)
+            {
+                signUp.SignupRoles = new List<SignupRole>();
+
+                foreach (var role in _signUproleRepo.GetById(signUp.UserId))
+                {
+                    SignupRole sr = new SignupRole()
+                    {
+                        SignUpId = signUp.UserId,
+                        RoleId = role,
+                        Role = _roleRepo.GetRoleById(role)
+
+                    };
+                    signUp.SignupRoles.Add(sr);
+                }
+            }
+            signlist.Reverse();
+            return Json(signlist);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public ActionResult<SignUp> AddSignUp(SignUpDto signUpDto)
+        {
+            SignUp signUp = new SignUp()
+            {
+                UserId = signUpDto.UserId,
+                UserName = signUpDto.UserName,
+                Email = signUpDto.Email,
+                Password = signUpDto.Password,
+                SignupRoles = new List<SignupRole>()
+            };
+            if (_signUpRepository.DuplicatedUserName(signUp))
+                return BadRequest("username already exist");
+            if (_signUpRepository.DuplicatedEmail(signUp))
+                return BadRequest("Email already exist");
+            _signUpRepository.AddSignUp(signUp);
+            if (signUpDto.RoleIds != null)
+            {
+                foreach (var role in signUpDto.RoleIds)
+                {
+                    SignupRole ep = new SignupRole()
+                    {
+                        SignUpId = signUp.UserId,
+                        RoleId = role,
+                        Role = _roleRepo.GetRoleById(role)
+                    };
+                    signUp.SignupRoles.Add(ep);
+                    _signUproleRepo.AddSignupRole(ep);
+                }
+            }
+
+            return signUp;
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public ActionResult SignIn(SignIn signIn)
+        {
+            if (_signUpRepository.Validate(signIn))
+            {
+                string user = signIn.Username;
+                string pass = signIn.Password;
+                string inputString = user + ":" + pass;
+                byte[] bytesToEncode = Encoding.UTF8.GetBytes(inputString);
+                string base64EncodedString = Convert.ToBase64String(bytesToEncode);
+                return Ok(new { Message = "Login Successful", Token = base64EncodedString, User = user });
+            }
+            else return BadRequest("UserName or Password does not match");
+        }
+
+
+        // Role 
+
+        [HttpPost]
+        [Route("[action]")]
+        public ActionResult<Role> AddRole(Role role)
+        {
+            _roleRepo.AddRole(role);
+            return role;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public JsonResult GetAllRole()
+        {
+            return Json(_roleRepo.GetAllRole());
+        }
+
+
+       
+        [Route("[action]")]
+        public ActionResult ForgotPassword([FromQuery] string Email)
+        {
+            if (_mail.SendEmail(Email))
+            {
+                return Ok(new { Message = "Send Email Sucessfully" });
+            }
+            else
+                return BadRequest("Something went wrong");
+        }
+
+        [Route("[action]")]
+        public ActionResult ResetPassword([FromQuery] string NewPassword, [FromQuery] string Email)
+        {
+            if (_signUpRepository.ResetPassword(NewPassword, Email))
+                return Ok(new { message = "Password Reset Succesfully" });
+            else
+                return BadRequest("Something went wrong");
+        }
+
+
+
+
+    }
+}

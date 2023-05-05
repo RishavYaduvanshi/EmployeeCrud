@@ -23,7 +23,13 @@ namespace EmployeeDetails.Repository
 
         public Project DeleteProject(int Id)
         {
-            throw new NotImplementedException();
+            Project proj = _dbContext.Projects.Find(Id);
+            if (proj == null)
+                return null;
+            _dbContext.Projects.Remove(proj);
+            _dbContext.SaveChanges(true);
+            return proj;
+
         }
 
         public IEnumerable<Project> GetAllProjects()

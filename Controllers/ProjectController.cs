@@ -1,12 +1,12 @@
-﻿using EmployeeDetails.Dto;
+﻿
 using EmployeeDetails.Model;
 using EmployeeDetails.Repository;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EmployeeDetails.Controllers
 {
-
+    [Authorize(AuthenticationSchemes = "BasicAuthentication")]
     [ApiController]
     [Route("[controller]")]
     public class ProjectController : Controller
@@ -31,6 +31,8 @@ namespace EmployeeDetails.Controllers
            return  _projectRepository.GetProjectId(id);
 
         }
+
+
 
         [HttpGet]
         [Route("[action]")]
@@ -63,6 +65,15 @@ namespace EmployeeDetails.Controllers
                 return BadRequest("Project already Exist");
             return proj;
 
+        }
+
+        [HttpDelete]
+        [Route("[action]/{id}")]
+        public ActionResult<Project> DeleteProject(int id)
+        {
+            Project project = _projectRepository.DeleteProject(id);
+            if (project==null) return BadRequest("Project does not found");
+            return project;
         }
     }
 }
