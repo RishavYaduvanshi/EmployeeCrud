@@ -20,7 +20,6 @@ namespace EmployeeDetails.Controllers
         private readonly IEmpProjRepository _empProjRepository;
         private readonly IProjectRepository _projectRepository;
         
-
         public EmployeeController(IEmployeeRepsitory employeerepsitory, IDepartmentRepository departmentRepository,IEmpProjRepository empProjRepository,IProjectRepository projectRepository)
         {
             _employeerepository = employeerepsitory;
@@ -89,6 +88,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Employee> AddEmployee(EmployeeDto emp)
         {
             var department = _departmentrepository.GetAllDepartment().FirstOrDefault(d => d.Name == emp.DepartmentName);

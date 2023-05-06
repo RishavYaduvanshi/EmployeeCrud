@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text;
 using EmployeeDetails.DB;
+using System.Collections;
 
 namespace EmployeeDetails.BasicAuth
 {
@@ -47,11 +48,39 @@ namespace EmployeeDetails.BasicAuth
                 }
                 else
                 {
-                    var claims = new[] 
-                    { 
-                        new Claim(ClaimTypes.Name, user.UserName)
-                
-                    };
+                    var rolelist = _dbContext.SignUpsRoles
+                                   .Where(s => s.SignUpId == user.UserId)
+                                   .Select(r => r.RoleId)
+                                   .ToList();
+
+
+                    var roles = new List<string>();
+                    foreach (var role in rolelist)
+                    {
+                        var roleName = _dbContext.Roles.FirstOrDefault(r => r.RoleId == role)?.RoleName;
+                        if (!string.IsNullOrEmpty(roleName))
+                        {
+                            Console.Out.WriteLine(roleName);
+                            roles.Add(roleName);
+                        }
+                    }
+
+                    string oneRollName = null;
+                    if (rolelist.Count > 0)
+                    {
+                        oneRollName = roles[0];
+                    }
+
+                    List<Claim> claims = new List<Claim>();
+                    claims.Add(new Claim(ClaimTypes.Name, user.UserName));
+                    //claims.Add(new Claim(ClaimTypes.Role, oneRollName));
+
+                    foreach (var role in roles)
+                    {
+                        Console.Out.WriteLine("the " + role);
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+                    Console.Out.WriteLine(claims.ToString());
                     var identity = new ClaimsIdentity(claims, Scheme.Name);
                     var principal = new ClaimsPrincipal(identity);
                     var ticket = new AuthenticationTicket(principal, Scheme.Name);
