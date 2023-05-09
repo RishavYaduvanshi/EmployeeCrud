@@ -11,6 +11,9 @@ namespace EmployeeDetails.Repository
 
         public bool ResetPassword(string NewPassword,string Email);
         public bool Validate(SignIn signIn);
+        public bool EmailVerfied(SignIn signIn);
+
+        public bool SetEmailVerification(string EmailVerification);
 
         public bool DuplicatedEmail(SignUp signUp);
         public bool DuplicatedUserName(SignUp signUp);

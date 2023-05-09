@@ -44,6 +44,28 @@ namespace EmployeeDetails.Repository
             return _context.SignUps.Any(u => u.UserName== signIn.Username && u.Password == signIn.Password);
         }
 
+        public bool EmailVerfied(SignIn signIn)
+        {
+            var ans = _context.SignUps
+                .Where(u => u.UserName == signIn.Username)
+                .Select(u => u.IsEmailConfirmed)
+                .FirstOrDefault();
+            if(ans == null)
+                return false;
+            return true;
+
+        }
+
+        public bool SetEmailVerification(string EmailVerification)
+        {
+            SignUp signUp = _context.SignUps.FirstOrDefault(e => e.Email == EmailVerification);
+            if (signUp == null)
+                return false;
+            signUp.IsEmailConfirmed = true;
+            _context.SaveChanges();
+            return true;
+        }
+
         public bool ResetPassword(string NewPassword, string Email)
         {
             var user = _context.SignUps.SingleOrDefault(u => u.Email == Email);

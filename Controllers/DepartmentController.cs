@@ -20,6 +20,7 @@ namespace EmployeeDetails.Controllers
         }
         [HttpGet]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Department> GetDepartment(int id)
         {
             if (id == 0 )
@@ -31,6 +32,7 @@ namespace EmployeeDetails.Controllers
         }
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "admin,user")]
         public JsonResult GetAllDepartments()
         {
             IEnumerable<Department> dep =  departmentRepository.GetAllDepartment();
@@ -50,6 +52,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpDelete]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
 
         public ActionResult<Department> DeleteDepartment(int id)
         {
@@ -63,6 +66,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Department> UpdateDepartment(int id,Department dep)
         {
             if (dep.Name == null)

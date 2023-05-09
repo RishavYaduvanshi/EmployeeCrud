@@ -67,6 +67,8 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult<SignUp> AddSignUp(SignUpDto signUpDto)
         {
+            
+
             SignUp signUp = new SignUp()
             {
                 UserId = signUpDto.UserId,
@@ -79,7 +81,24 @@ namespace EmployeeDetails.Controllers
                 return BadRequest("username already exist");
             if (_signUpRepository.DuplicatedEmail(signUp))
                 return BadRequest("Email already exist");
+
+            if (signUpDto.RoleIds == null && signUpDto.UserName == "admin")
+            {
+                signUpDto.RoleIds = new List<int>();
+                signUpDto.RoleIds.Add(1);
+                signUp.IsEmailConfirmed = true;
+            }
+            else if (signUpDto.RoleIds == null)
+            {
+                signUpDto.RoleIds = new List<int>();
+                signUpDto.RoleIds.Add(2);
+            }
+
             _signUpRepository.AddSignUp(signUp);
+
+            _mail.SendEmail(signUp.Email, 2);
+
+            // from admin side
             if (signUpDto.RoleIds != null)
             {
                 foreach (var role in signUpDto.RoleIds)
@@ -104,12 +123,18 @@ namespace EmployeeDetails.Controllers
         {
             if (_signUpRepository.Validate(signIn))
             {
+               
                 string user = signIn.Username;
                 string pass = signIn.Password;
+                bool validate = _signUpRepository.EmailVerfied(signIn);
+                if (!validate)
+                {
+                    return BadRequest("Email is not Verified");
+                }
                 string inputString = user + ":" + pass;
                 byte[] bytesToEncode = Encoding.UTF8.GetBytes(inputString);
                 string base64EncodedString = Convert.ToBase64String(bytesToEncode);
-                return Ok(new { Message = "Login Successful", Token = base64EncodedString, User = user });
+                return Ok(new { Message = "Login Successful", Token = base64EncodedString, User = user ,Verified = validate});
             }
             else return BadRequest("UserName or Password does not match");
         }
@@ -137,7 +162,7 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult ForgotPassword([FromQuery] string Email)
         {
-            if (_mail.SendEmail(Email))
+            if (_mail.SendEmail(Email,1))
             {
                 return Ok(new { Message = "Send Email Sucessfully" });
             }
@@ -153,8 +178,14 @@ namespace EmployeeDetails.Controllers
             else
                 return BadRequest("Something went wrong");
         }
-
-
+        [Route("[action]")]
+        public ActionResult EmailVerfiedDone([FromQuery] string Email)
+        {
+            if (_signUpRepository.SetEmailVerification(Email))
+                return Ok(new { message = "Verified" });
+            else 
+                return BadRequest(new { message = "Email Does not exist" });
+        }
 
 
     }

@@ -25,6 +25,8 @@ namespace EmployeeDetails.Controllers
 
         [HttpGet]
         [Route("[action]/{id?}")]
+        [Authorize(Roles = "admin")]
+
 
         public ActionResult<Project> GetProjectById(int id)
         {
@@ -36,6 +38,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "admin,user")]
         public JsonResult GetAllProjects()
         {
             var projects = _projectRepository.GetAllProjects();
@@ -45,6 +48,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpPost]
         [Route("[action]")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Project> AddProject(Project project)
         {
             
@@ -54,6 +58,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Project> UpdateProject(int id, Project project)
         {
             if (project.PName == null && project.PDescription == null)
@@ -69,6 +74,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpDelete]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Project> DeleteProject(int id)
         {
             Project project = _projectRepository.DeleteProject(id);
