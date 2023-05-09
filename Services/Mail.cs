@@ -6,15 +6,23 @@ namespace EmployeeDetails.Services
     public class Mail
     {
 
-        public bool SendEmail(string MailTo) 
+        public bool SendEmail(string MailTo,int body) 
         {
             string fromMail = "19gietucse196@gmail.com";
             string fromPassword = "bialtxrnwikfpxnx";
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
             message.Subject = "ResetPassword";
- 
-            message.Body = $"<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href=\"http://localhost:4200/**?email={MailTo}\">RESETLINK</a></p>";
+            string mesReset = $"<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href=\"http://localhost:4200/**?email={MailTo}\">RESETLINK</a></p>";
+            string mesCnf = $"<p>Hello,</p><p>Please click the following link to verify your email address:</p><p><a href=\"http://localhost:4200/email_verified?email={MailTo}\">VERIFYLINK</a></p>";
+            if (body == 1)
+            {
+                message.Body = mesReset;
+            }
+            else
+            {
+                message.Body = mesCnf;
+            }
             message.IsBodyHtml = true;
             message.To.Add(new MailAddress(MailTo));
 

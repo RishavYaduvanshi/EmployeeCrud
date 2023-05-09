@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeDetails.Migrations
 {
     [DbContext(typeof(EmployeeDbContext))]
-    [Migration("20230426092136_AddAuth")]
-    partial class AddAuth
+    [Migration("20230509063731_FullData")]
+    partial class FullData
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,6 +118,9 @@ namespace EmployeeDetails.Migrations
 
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
+
+                    b.Property<bool?>("IsEmailConfirmed")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext");

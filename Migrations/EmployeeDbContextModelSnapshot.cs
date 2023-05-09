@@ -116,6 +116,9 @@ namespace EmployeeDetails.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("longtext");
 
+                    b.Property<bool?>("IsEmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Password")
                         .HasColumnType("longtext");
 

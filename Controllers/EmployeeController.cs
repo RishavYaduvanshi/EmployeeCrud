@@ -30,6 +30,7 @@ namespace EmployeeDetails.Controllers
         }
         [HttpGet]
         [Route("[action]/{id?}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Employee> GetEmployeeByID(int? id)
         {
             Employee emp = _employeerepository.GetEmployeeById(id ?? 1);
@@ -57,6 +58,7 @@ namespace EmployeeDetails.Controllers
         
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "admin,user")]
         public JsonResult GetAllEmployee()
         {
 
@@ -150,6 +152,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpPut]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Employee> UpdateEmployee(int id, [FromBody] EmployeeDto emp)
         {
             if (emp.DepartmentName != null)
@@ -223,6 +226,7 @@ namespace EmployeeDetails.Controllers
 
         [HttpDelete]
         [Route("[action]/{id}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<Employee> DeleteEmployee(int id)
         {
             var employee = _employeerepository.DeleteEmployee(id);
