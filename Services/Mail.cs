@@ -13,8 +13,8 @@ namespace EmployeeDetails.Services
             MailMessage message = new MailMessage();
             message.From = new MailAddress(fromMail);
             message.Subject = "ResetPassword";
-            string mesReset = $"<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href=\"http://localhost:4200/**?email={MailTo}\">RESETLINK</a></p>";
-            string mesCnf = $"<p>Hello,</p><p>Please click the following link to verify your email address:</p><p><a href=\"http://localhost:4200/email_verified?email={MailTo}\">VERIFYLINK</a></p>";
+            string mesReset = $"<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href=\"https://rishavemp.d3m0n1k.engineer//**?email={MailTo}\">RESETLINK</a></p>";
+            string mesCnf = $"<p>Hello,</p><p>Please click the following link to verify your email address:</p><p><a href=\"http://rishav.d3m0n1k.engineer/email_verified?email={MailTo}\">VERIFYLINK</a></p>";
             if (body == 1)
             {
                 message.Body = mesReset;
