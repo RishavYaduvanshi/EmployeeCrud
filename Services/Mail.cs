@@ -17,7 +17,7 @@ namespace EmployeeDetails.Services
             else
                 message.Subject = "Verify Account";
             string mesReset = $"<p>Hello,</p><p>Please click the following link to reset your password:</p><p><a href=\"https://rishavemp.d3m0n1k.engineer/**?email={MailTo}\">RESETLINK</a></p>";
-            string mesCnf = $"<p>Hello,</p><p>Please click the following link to verify your email address:</p><p><a href=\"http://rishavemp.d3m0n1k.engineer/email_verified?email={MailTo}\">VERIFYLINK</a></p>";
+            string mesCnf = $"<p>Hello,</p><p>Please click the following link to verify your email address:</p><p><a href=\"https://rishavemp.d3m0n1k.engineer/email_verified?email={MailTo}\">VERIFYLINK</a></p>";
             if (body == 1)
             {
                 message.Body = mesReset;
