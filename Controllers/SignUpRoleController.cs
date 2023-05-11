@@ -4,6 +4,7 @@ using EmployeeDetails.Repository;
 using EmployeeDetails.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace EmployeeDetails.Controllers
 {
@@ -173,6 +174,10 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult ResetPassword([FromQuery] string NewPassword, [FromQuery] string Email)
         {
+            string pattern = @"^[a-zA-Z0-9_.+-]+@gmail\.com$";
+            Regex regex = new Regex(pattern);
+            if (!regex.IsMatch(Email))
+                Email = _signUpRepository.GetEmailFromUserName(Email);
             if (_signUpRepository.ResetPassword(NewPassword, Email))
                 return Ok(new { message = "Password Reset Succesfully" });
             else
@@ -181,6 +186,7 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult EmailVerfiedDone([FromQuery] string Email)
         {
+            
             if (_signUpRepository.SetEmailVerification(Email))
                 return Ok(new { message = "Verified" });
             else 
