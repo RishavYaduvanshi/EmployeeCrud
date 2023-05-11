@@ -173,6 +173,10 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult ResetPassword([FromQuery] string NewPassword, [FromQuery] string Email)
         {
+            string pattern = @"^[a-zA-Z0-9_.+-]+@gmail\.com$";
+            Regex regex = new Regex(pattern);
+            if (!regex.IsMatch(Email))
+                Email = _signUpRepository.GetEmailFromUserName(Email);
             if (_signUpRepository.ResetPassword(NewPassword, Email))
                 return Ok(new { message = "Password Reset Succesfully" });
             else

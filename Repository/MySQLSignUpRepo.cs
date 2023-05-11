@@ -55,6 +55,13 @@ namespace EmployeeDetails.Repository
             return true;
 
         }
+        public string GetEmailFromUserName(string UserName)
+        {
+            string email = _context.SignUps.Where(u => u.UserName == UserName).Select(u => u.Email).FirstOrDefault();
+            if(email == null)
+                return null;
+            return email;
+        }
 
         public bool SetEmailVerification(string EmailVerification)
         {
