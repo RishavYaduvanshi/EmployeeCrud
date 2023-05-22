@@ -14,6 +14,7 @@ namespace EmployeeDetails.Repository
         public bool EmailVerfied(SignIn signIn);
 
         public bool SetEmailVerification(string EmailVerification);
+        public string GetEmailFromUserName(string UserName);
 
         public string GetEmailFromUserName(string UserName);
         public string GetUserNameFromEmail(string Email);
