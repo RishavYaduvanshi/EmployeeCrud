@@ -37,10 +37,10 @@ namespace EmployeeDetails.BasicAuth
 
                 var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':');
-                var username = credentials[0];
+                var email = credentials[0];
                 var password = credentials[1];
 
-                var user = _dbContext.SignUps.FirstOrDefault(u => u.UserName == username && u.Password == password);
+                var user = _dbContext.SignUps.FirstOrDefault(u => u.Email == email && u.Password == password);
 
                 if (user == null)
                 {

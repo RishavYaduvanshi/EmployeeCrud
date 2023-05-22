@@ -122,17 +122,28 @@ namespace EmployeeDetails.Controllers
         [Route("[action]")]
         public ActionResult SignIn(SignIn signIn)
         {
+            if (signIn.Email == null)
+            {
+                signIn.Email = _signUpRepository.GetEmailFromUserName(signIn.Username);
+            }
+            if (signIn.Username == null)
+            {
+                signIn.Username = _signUpRepository.GetUserNameFromEmail(signIn.Email);
+            }
             if (_signUpRepository.Validate(signIn))
             {
-               
+                
+
                 string user = signIn.Username;
                 string pass = signIn.Password;
+                string email = signIn.Email;
+
                 bool validate = _signUpRepository.EmailVerfied(signIn);
                 if (!validate)
                 {
                     return BadRequest("Email is not Verified");
                 }
-                string inputString = user + ":" + pass;
+                string inputString = email + ":" + pass;
                 byte[] bytesToEncode = Encoding.UTF8.GetBytes(inputString);
                 string base64EncodedString = Convert.ToBase64String(bytesToEncode);
                 return Ok(new { Message = "Login Successful", Token = base64EncodedString, User = user ,Verified = validate});

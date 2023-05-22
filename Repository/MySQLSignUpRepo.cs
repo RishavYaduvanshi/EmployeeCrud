@@ -41,13 +41,13 @@ namespace EmployeeDetails.Repository
         public bool Validate(SignIn signIn)
         {
         
-            return _context.SignUps.Any(u => u.UserName== signIn.Username && u.Password == signIn.Password);
+            return _context.SignUps.Any(u => u.Email== signIn.Email && u.Password == signIn.Password);
         }
 
         public bool EmailVerfied(SignIn signIn)
         {
             var ans = _context.SignUps
-                .Where(u => u.UserName == signIn.Username)
+                .Where(u => u.Email == signIn.Email)
                 .Select(u => u.IsEmailConfirmed)
                 .FirstOrDefault();
             if(ans == null)
@@ -61,6 +61,17 @@ namespace EmployeeDetails.Repository
             if(email == null)
                 return null;
             return email;
+        }
+
+        public string GetUserNameFromEmail(string Email)
+        {
+
+            string UserName = _context.SignUps.Where(u => u.Email == Email).Select(u => u.UserName).FirstOrDefault();
+            if (UserName == null)
+                return null;
+            return UserName;
+
+
         }
         public bool SetEmailVerification(string EmailVerification)
         {
