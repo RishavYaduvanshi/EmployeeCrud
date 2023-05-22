@@ -15,8 +15,6 @@ namespace EmployeeDetails.Repository
 
         public bool SetEmailVerification(string EmailVerification);
         public string GetEmailFromUserName(string UserName);
-
-        public string GetEmailFromUserName(string UserName);
         public string GetUserNameFromEmail(string Email);
         public bool DuplicatedEmail(SignUp signUp);
         public bool DuplicatedUserName(SignUp signUp);
